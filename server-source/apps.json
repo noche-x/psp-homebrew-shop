@@ -1,0 +1,9 @@
+{
+    "apps": [
+      {
+        "name": "pspcord",
+        "large": "../cache/pspcord/icon.png",
+        "desc": "hello everyone, this is description"
+      }
+    ]
+  }

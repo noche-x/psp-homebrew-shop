@@ -1,0 +1,17 @@
+{
+    "configurations": [
+        {
+            "name": "PSP",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/usr/local/pspdev/psp/sdk/include/"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/local/pspdev/bin/psp-g++",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "gcc-x86"
+        }
+    ],
+    "version": 4
+}
