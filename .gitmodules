@@ -1,0 +1,6 @@
+[submodule "lib/Stardust-Engine"]
+	path = lib/Stardust-Engine
+	url = https://github.com/NT-Bourgeois-Iridescence-Technologies/Stardust-Engine
+[submodule "lib/fmt"]
+	path = lib/fmt
+	url = https://github.com/fmtlib/fmt
