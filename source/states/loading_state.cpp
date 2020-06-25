@@ -62,7 +62,7 @@ void loading_state::update()
         if (m_content_init)
             loading_what_text->setContent("ready");
 
-        scale += 19.f;
+        scale += 2.f;
         bar_sprite->Scale(scale, 1.f);
 
         g::network_init = false;
@@ -71,17 +71,27 @@ void loading_state::update()
 
     if (!m_content_init && !once)
     {
-        Network::g_NetworkDriver.Connect(35700, "192.168.2.190", false);
+        std::ifstream ip_file("server_ip.txt");
+        if (ip_file.is_open()) {
+            std::string ip = "";
+            std::getline(ip_file, ip);
+            Utilities::app_Logger->log(ip);
 
-        Stardust::Network::PacketOut *p = new Stardust::Network::PacketOut();
-        p->ID = PacketIDS::GET_APPS;
-        Network::encodeString("fafa", *p);
+            Network::g_NetworkDriver.Connect(35700, ip.c_str(), false);
+
+            Stardust::Network::PacketOut *p = new Stardust::Network::PacketOut();
+            p->ID = PacketIDS::GET_APPS;
+            Network::encodeString("fafa", *p);
         
-        Network::g_NetworkDriver.AddPacket(p);
-        Network::g_NetworkDriver.SendPackets();
+            Network::g_NetworkDriver.AddPacket(p);
+            Network::g_NetworkDriver.SendPackets();
 
-        Network::g_NetworkDriver.ReceivePacket();
-        Network::g_NetworkDriver.HandlePackets();
+            Network::g_NetworkDriver.ReceivePacket();
+            Network::g_NetworkDriver.HandlePackets();
+        }
+        else {
+            Utilities::app_Logger->log("error while openning server_ip.txt");
+        }
 
         // int thid = 0;
 		// thid = sceKernelCreateThread("temp_connection_thread", connection_thread, 0x11, 0xFA0, 0, 0);

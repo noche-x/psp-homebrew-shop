@@ -8,6 +8,7 @@
 #include <Utilities/Timer.h>
 #include <Utilities/Logger.h>
 #include <Utilities/Input.h>
+#include <Utilities/JSON.h>
 #include <Graphics/Dialogs.h>
 #include <Graphics/RendererCore.h>
 #include <Graphics/UI/UIText.h>
@@ -24,10 +25,29 @@ PSP_HEAP_SIZE_KB(-1024);
 
 using namespace Stardust;
 
-int send_apps_handler(Stardust::Network::PacketIn *packet)
+int send_apps_handler(Network::PacketIn *packet)
 {
-    std::string apps_file = Stardust::Network::decodeString(*packet);
-    Stardust::Utilities::app_Logger->log(apps_file);
+    std::string apps_file = Network::decodeString(*packet);
+    Json::Value v = apps_file;
+    for (int i = 0; i < v["apps"].size(); i++)
+        if (v["apps"][i].isObject())
+        {
+            std::ifstream f(v["apps"][i]["large"].asString());
+            if (!f.good())
+            {
+                Network::PacketOut *p = new Network::PacketOut();
+                p->ID = PacketIDS::GET_FILE;
+                Network::encodeString(v["apps"][i]["large"].asString(), *p);
+
+                Network::g_NetworkDriver.AddPacket(p);
+                Network::g_NetworkDriver.SendPackets();
+
+                Network::g_NetworkDriver.ReceivePacket();
+                Network::g_NetworkDriver.HandlePackets();
+            }
+        }
+    
+    Utilities::app_Logger->log("apps file recieved");
 
     return 0;
 }

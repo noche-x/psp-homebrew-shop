@@ -191,7 +191,20 @@ void *handle_connection(void *p_client_socket)
             new_packet->ID = PacketIDS::SEND_FILE;
 
             std::string file_name = decodeString(pIn);
-            LOG("file name: " << file_name);
+            std::ifstream file(file_name);
+            if (file.good()) {
+                std::string file_string = "";
+
+                file.seekg(0, std::ios::end);
+                file_string.reserve(file.tellg());
+                file.seekg(0, std::ios::beg);
+
+                file_string.assign((std::istreambuf_iterator<char>(file)),
+                           std::istreambuf_iterator<char>());
+
+                encodeString(file_string, *new_packet);
+            }
+            LOG("client requested file name: " << file_name);
             break;
         }
     };
