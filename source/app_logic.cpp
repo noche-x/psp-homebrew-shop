@@ -7,7 +7,7 @@ void app_logic::init() {
     m_splash_state = new splash_state();
     m_loading_state = new loading_state();
 
-    m_state_manager->change_state(m_splash_state);
+    m_state_manager->change_state(m_loading_state);
 };
 
 void app_logic::run() {

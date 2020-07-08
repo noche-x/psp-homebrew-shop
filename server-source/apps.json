@@ -1,8 +1,8 @@
 {
     "apps": [
       {
-        "name": "pspcord",
-        "large": "../cache/pspcord/icon.png",
+        "name": "mcpsp",
+        "large": "cache/mcpsp/icon.png",
         "desc": "hello everyone, this is description"
       }
     ]

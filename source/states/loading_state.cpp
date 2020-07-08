@@ -5,6 +5,7 @@
 #include <Network/NetworkDriver.h>
 #include <Graphics/Dialogs.h>
 #include <Network/NetworkDriver.h>
+#include <Core/Core.h>
 #include <pspaudio.h>
 
 using namespace Stardust;
@@ -46,10 +47,12 @@ void loading_state::update()
     static bool once = false;
     static int alpha = 255;
 
-    if (alpha > 0.f) {
+    if (alpha > 0.f)
+    {
         alpha -= 2;
     }
-    else if (alpha <= 0.f) {
+    else if (alpha <= 0.f)
+    {
         alpha = 255;
     }
 
@@ -71,34 +74,42 @@ void loading_state::update()
 
     if (!m_content_init && !once)
     {
-        std::ifstream ip_file("server_ip.txt");
-        if (ip_file.is_open()) {
-            std::string ip = "";
-            std::getline(ip_file, ip);
-            Utilities::app_Logger->log(ip);
+        std::string base_url = "http://psphbshop.s3.eu-central-1.amazonaws.com/";
+        std::string req_file = base_url + "cache/apps.json";
 
-            Network::g_NetworkDriver.Connect(35700, ip.c_str(), false);
-
-            Stardust::Network::PacketOut *p = new Stardust::Network::PacketOut();
-            p->ID = PacketIDS::GET_APPS;
-            Network::encodeString("fafa", *p);
-        
-            Network::g_NetworkDriver.AddPacket(p);
-            Network::g_NetworkDriver.SendPackets();
-
-            Network::g_NetworkDriver.ReceivePacket();
-            Network::g_NetworkDriver.HandlePackets();
-        }
+        Utilities::app_Logger->log(req_file);
+        if (!Network::g_NetworkDriver.GetFileHTTP(req_file.c_str(), "cache/apps.json"))
+            Utilities::app_Logger->log("unable to get apps.json (check low level core logs)");
         else {
-            Utilities::app_Logger->log("error while openning server_ip.txt");
+            Utilities::app_Logger->log("recieved cache/apps.json");
+
+            Json::Value v = Utilities::JSON::openJSON("cache/apps.json");
+            Utilities::app_Logger->log("apps array size: " + std::to_string(v["apps"].size()));
+            for (int i = 0; i < v["apps"].size(); i++)
+            {
+                if (v["apps"][i].isObject())
+                {
+                    std::ifstream f(v["apps"][i]["large"].asString());
+                    if (!f.good())
+                    {
+                        req_file = base_url + v["apps"][i]["large"].asString();
+                        Utilities::app_Logger->log(req_file);
+
+                        if (Network::g_NetworkDriver.GetFileHTTP(req_file.c_str(), v["apps"][i]["large"].asString().c_str()))
+                            Utilities::app_Logger->log("recieved " + v["apps"][i]["large"].asString());
+                        else
+                            Utilities::app_Logger->log("unable to get " + v["apps"][i]["large"].asString() + " (check low level core logs)");
+                    }
+                    else
+                    {
+                        Utilities::app_Logger->log(v["apps"][i]["large"].asString() + " exists. skiping.");
+                    }                    
+                }
+            }
+            
+            Network::g_NetworkDriver.Cleanup();
         }
 
-        // int thid = 0;
-		// thid = sceKernelCreateThread("temp_connection_thread", connection_thread, 0x11, 0xFA0, 0, 0);
-		// if (thid >= 0)
-		// {
-		// 	sceKernelStartThread(thid, 0, 0);
-		// }
         m_content_init = true;
         once = true;
     }
