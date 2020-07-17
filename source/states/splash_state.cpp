@@ -17,8 +17,8 @@ void splash_state::init()
 {
     m_should_change = false;
 
-    stardust_logo_sprite = new Stardust::Graphics::Render2D::Sprite(Stardust::Graphics::TextureUtil::LoadPng("assets/images/stardust_logo.png"));
-    app_logo_sprite = new Stardust::Graphics::Render2D::Sprite(Stardust::Graphics::TextureUtil::LoadPng("assets/images/app_logo.png"));
+    stardust_logo_sprite = new Stardust::Graphics::Render2D::Sprite(Stardust::Graphics::TextureUtil::LoadTex("./assets/images/stardust_logo.png"));
+    app_logo_sprite = new Stardust::Graphics::Render2D::Sprite(Stardust::Graphics::TextureUtil::LoadTex("./assets/images/app_logo.png"));
     stardust_logo_sprite->SetPosition(240, 136);
     app_logo_sprite->SetPosition(240, 136);
 

@@ -11,6 +11,22 @@
             "cStandard": "c11",
             "cppStandard": "c++17",
             "intelliSenseMode": "gcc-x86"
+        },
+        {
+            "name": "PSP-WIN",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "C:/pspsdk/psp/sdk/include"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "intelliSenseMode": "gcc-x86",
+            "compilerPath": "C:/pspsdk/bin/psp-gcc",
+            "cppStandard": "c++17",
+            "cStandard": "c18"
         }
     ],
     "version": 4

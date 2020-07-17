@@ -15,7 +15,9 @@ public:
 private:
     bool m_should_change;
     bool m_content_init;
-	const char* m_content;
+
+	int m_loading_text_alpha;
+	int m_bar_scale;
 
 	Stardust::Utilities::Timer* m_animation_timer;
 	Stardust::Graphics::UI::UIText* loading_what_text;

@@ -2,6 +2,7 @@
 #include "state_manager.h"
 #include "states/splash_state.h"
 #include "states/loading_state.h"
+#include "states/shop_state.h"
 
 class app_logic {
 public:
@@ -12,4 +13,5 @@ private:
 	state_manager* m_state_manager;
     splash_state* m_splash_state;
     loading_state* m_loading_state;
+    shop_state* m_shop_state;
 };

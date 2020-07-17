@@ -1,0 +1,8 @@
+ldstart psp-homebrew-shop.prx
+ldstart psp-homebrew-shop.prx
+ls
+ldstart psp-homebrew-shop.prx
+ldstart psp-homebrew-shop.prx
+calc $epc-$mod
+reset
+ldstart psp-homebrew-shop.prx
