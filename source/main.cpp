@@ -21,11 +21,6 @@
 #include "global_variables.h"
 #include "app_logic.h"
 #include "definitions.h"
-
-PSP_MODULE_INFO("PSP-Homebrew-Shop", 0, 0, 1);
-PSP_MAIN_THREAD_ATTR(THREAD_ATTR_VFPU | THREAD_ATTR_USER);
-PSP_HEAP_SIZE_KB(-1024);
-
 using namespace Stardust;
 
 int main()
@@ -35,7 +30,9 @@ int main()
 
     // NOTE: add trace logs to stardust
     Utilities::detail::core_Logger->currentLevel = Utilities::LoggerLevel::LOGGER_LEVEL_TRACE;
-
+    
+    g::dark_bar = GFX::g_TextureManager->loadTex("assets/images/dark_bar.png", GFX_FILTER_LINEAR, GFX_FILTER_LINEAR, false);
+    g::bar = GFX::g_TextureManager->loadTex("assets/images/bar.png", GFX_FILTER_LINEAR, GFX_FILTER_LINEAR, false);
 #ifndef SKIP_NET_INIT
     if (!Network::g_NetworkDriver.Init())
     {
@@ -51,7 +48,6 @@ int main()
     g::network_init = false;
     Utilities::app_Logger->log("skipping network init...");
 #endif
-
     app_logic *g_logic = new app_logic();
     g_logic->init();
 
@@ -61,6 +57,7 @@ int main()
     const char* dev_ver = "DEV VERSION";
     
     g::font_renderer = new GFX::UI::TextRenderer();
+    g::font_renderer->init("./assets/font.pgf");
 #endif
 
     while (g_logic->is_running())
@@ -71,7 +68,7 @@ int main()
         g_logic->run();
 
 #ifdef INTERNAL_DEV
-        g::font_renderer->setStyle({255, 255, 255, 255, 0.7f, -1, INTRAFONT_ALIGN_RIGHT, 0, false});
+        g::font_renderer->setStyle({255, 255, 255, 255, 0.7f, INTRAFONT_ALIGN_RIGHT, INTRAFONT_ALIGN_RIGHT, 0, false});
         g::font_renderer->draw(dev_ver, {480, 262});
 #endif
 

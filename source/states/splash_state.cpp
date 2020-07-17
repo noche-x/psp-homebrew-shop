@@ -13,11 +13,12 @@ double easeInOutExpo(double t)
     }
 }
 
+unsigned int app_logo, logo_tex;
 void splash_state::init()
 {
     m_should_change = false;
-    unsigned int logo_tex = Stardust::GFX::g_TextureManager->loadTex("./assets/images/stardust_logo.png");
-    unsigned int app_logo = Stardust::GFX::g_TextureManager->loadTex("./assets/images/app_logo.png");
+    logo_tex = Stardust::GFX::g_TextureManager->loadTex("./assets/images/stardust_logo.png", GFX_FILTER_NEAREST, GFX_FILTER_NEAREST, false);
+    app_logo = Stardust::GFX::g_TextureManager->loadTex("./assets/images/app_logo.png", GFX_FILTER_NEAREST, GFX_FILTER_NEAREST, false);
 
     stardust_logo_sprite = new Stardust::GFX::Render2D::Sprite(logo_tex);
     app_logo_sprite = new Stardust::GFX::Render2D::Sprite(app_logo);
@@ -30,6 +31,8 @@ void splash_state::init()
 
 void splash_state::destroy()
 {
+    Stardust::GFX::g_TextureManager->deleteTex(logo_tex);
+    Stardust::GFX::g_TextureManager->deleteTex(app_logo);
     delete stardust_logo_sprite;
     delete app_logo_sprite;
     delete m_animation_timer;

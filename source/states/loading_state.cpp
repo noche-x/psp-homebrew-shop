@@ -17,28 +17,26 @@ void loading_state::init()
     m_loading_text_alpha = 255;
     m_bar_scale = 1.5f;
     
-    input_text = new Stardust::GFX::UI::UIText({240, 106}, "loading");
-    loading_what_text = new Stardust::GFX::UI::UIText({240, 180}, "network");
+    //input_text = new Stardust::GFX::UI::UIText({240, 106}, "loading");
+    //loading_what_text = new Stardust::GFX::UI::UIText({240, 180}, "network");
 
-    loading_what_text->setOptions({0.5f, 0xFFFFFFFF, INTRAFONT_ALIGN_CENTER});
+    //loading_what_text->setOptions({0.5f, 0xFFFFFFFF, INTRAFONT_ALIGN_CENTER});
 
     // NOTE: if it can't find the png files check where its loading from,
     //      example: (for me atleast ) on windows usbhostfs_pc doesn't change dirs
     //      so i have to start it from the dir i want it to be at. 
-    bar_sprite = new Stardust::GFX::Render2D::Sprite(Stardust::GFX::TextureUtil::LoadPng("assets/images/bar.png"));
-    dark_bar_sprite = new Stardust::GFX::Render2D::Sprite(Stardust::GFX::TextureUtil::LoadPng("assets/images/dark_bar.png"));
+    bar_sprite = new Stardust::GFX::Render2D::Sprite(g::bar);
+    dark_bar_sprite = new Stardust::GFX::Render2D::Sprite(g::dark_bar);
 
-    bar_sprite->SetPosition(240, 136);
-    dark_bar_sprite->SetPosition(240, 136);
+    bar_sprite->setPosition(240, 136);
+    dark_bar_sprite->setPosition(240, 136);
 
-    bar_sprite->Scale(1.f, 1.f);
-    dark_bar_sprite->Scale(40.f, 1.f);
+    bar_sprite->setScale(1.f, 1.f);
+    dark_bar_sprite->setScale(40.f, 1.f);
 }
 
 void loading_state::destroy()
 {
-    delete input_text;
-    delete loading_what_text;
     delete bar_sprite;
     delete dark_bar_sprite;
 }
@@ -62,19 +60,19 @@ void loading_state::update()
         m_loading_text_alpha = 255;
     }
 
-    input_text->setOptions({1.f, GU_ARGB(m_loading_text_alpha, 255, 255, 255), INTRAFONT_ALIGN_CENTER});
+    //input_text->setOptions({1.f, GU_ARGB(m_loading_text_alpha, 255, 255, 255), INTRAFONT_ALIGN_CENTER});
 
     if (g::network_init || m_content_init)
     {
         if (g::network_init)
-            loading_what_text->setContent("content");
+            //loading_what_text->setContent("content");
         if (m_content_init) {
-            loading_what_text->setContent("ready");
+            //loading_what_text->setContent("ready");
             m_should_change = true;
         }
 
         m_bar_scale += 2.f;
-        bar_sprite->Scale(m_bar_scale, 1.f);
+        bar_sprite->setScale(m_bar_scale, 1.f);
 
         g::network_init = false;
         m_content_init = false;
@@ -122,9 +120,9 @@ void loading_state::update()
         once = true;
     }
     else if (!m_content_init && !once && !g::network_init) {
-        loading_what_text->setContent("failed or skipped network init, loading from cache");
+        //loading_what_text->setContent("failed or skipped network init, loading from cache");
 
-        bar_sprite->Scale(40.f, 1.f);
+        bar_sprite->setScale(40.f, 1.f);
 
         m_should_change = true;
 
@@ -142,8 +140,8 @@ void loading_state::draw()
     if (m_should_change)
         return;
 
-    input_text->draw();
-    loading_what_text->draw();
-    dark_bar_sprite->Draw();
-    bar_sprite->Draw();
+    //input_text->draw();
+    //loading_what_text->draw();
+    dark_bar_sprite->draw();
+    bar_sprite->draw();
 }
