@@ -46,7 +46,7 @@ int connection_thread(SceSize args, void *argp)
 
     return 0;
 }
-
+std::string what = "";
 void loading_state::update()
 {
     static bool once = false;
@@ -60,14 +60,12 @@ void loading_state::update()
         m_loading_text_alpha = 255;
     }
 
-    //input_text->setOptions({1.f, GU_ARGB(m_loading_text_alpha, 255, 255, 255), INTRAFONT_ALIGN_CENTER});
-
     if (g::network_init || m_content_init)
     {
         if (g::network_init)
-            //loading_what_text->setContent("content");
+            what = "content";
         if (m_content_init) {
-            //loading_what_text->setContent("ready");
+            what =  "ready";
             m_should_change = true;
         }
 
@@ -120,7 +118,7 @@ void loading_state::update()
         once = true;
     }
     else if (!m_content_init && !once && !g::network_init) {
-        //loading_what_text->setContent("failed or skipped network init, loading from cache");
+        what = "failed or skipped network init, loading from cache";
 
         bar_sprite->setScale(40.f, 1.f);
 
@@ -140,8 +138,10 @@ void loading_state::draw()
     if (m_should_change)
         return;
 
-    //input_text->draw();
-    //loading_what_text->draw();
+    g::font_renderer->setStyle({255, 255, 255, m_loading_text_alpha, 1.f, -1, INTRAFONT_ALIGN_CENTER, 0.0f, false});
+    g::font_renderer->draw("Loading", {240, 106});
+    g::font_renderer->draw(what, {240, 180});
+    
     dark_bar_sprite->draw();
     bar_sprite->draw();
 }

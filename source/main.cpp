@@ -69,7 +69,7 @@ int main()
 
 #ifdef INTERNAL_DEV
         g::font_renderer->setStyle({255, 255, 255, 255, 0.7f, INTRAFONT_ALIGN_RIGHT, INTRAFONT_ALIGN_RIGHT, 0, false});
-        g::font_renderer->draw(dev_ver, {480, 262});
+        g::font_renderer->draw(dev_ver, {480, 265});
 #endif
 
         Platform::platformUpdate();
