@@ -3,7 +3,6 @@
 #include "../definitions.h"
 #include <Utilities/Logger.h>
 #include <Network/NetworkDriver.h>
-#include <Graphics/Dialogs.h>
 #include <Network/NetworkDriver.h>
 #include <Core/Core.h>
 #include <Utilities/Input.h>
@@ -23,15 +22,14 @@ void shop_state::init()
 
     names_vector.clear();
 
-    box_sprite = new Graphics::Render2D::Sprite(Graphics::TextureUtil::LoadPng("assets/images/dark_bar.png"));
-    box_sprite->RGB(170, 170, 170);
-    box_sprite->Scale(m_box_width / 10, m_box_height / 10);
     
-    bar_box_sprite = new Graphics::Render2D::Sprite(Graphics::TextureUtil::LoadPng("assets/images/bar.png"));
-    bar_box_sprite->Scale(100, 2);
-    bar_box_sprite->SetPosition((5 * box_sprite->scaleX) / 2, ( 5 * box_sprite->scaleY) / 4);
-
-    app_name_text = new Stardust::Graphics::UI::UIText({240, 106}, "loading");
+    
+    box_sprite = new GFX::Render2D::Sprite(g::dark_bar);
+    box_sprite->setColor(170.0f / 255.0f, 170.0f / 255.0f, 170.0f / 255.0f, 1.0f);
+    box_sprite->setScale((float)m_box_width / 16.0f, (float)m_box_height / 16.0f);
+    bar_box_sprite = new GFX::Render2D::Sprite(g::bar);
+    bar_box_sprite->setScale(100, 2);
+    //bar_box_sprite->setPosition((5 * 100) / 2, (5 * 2) / 4);
 }
 
 void shop_state::destroy()
@@ -69,11 +67,11 @@ void shop_state::draw()
     for (int y = 0; y < 3; y++) 
     {
         for (int x = 0; x < 4; x++)
-        {
-            box_sprite->SetPosition(((x + 1) * 8) + (x * m_box_width) + (m_box_width / 2), 22 + ((y + 1) * 2) + (y * m_box_height) + (m_box_height / 2));
-            box_sprite->Draw();
+        {   
+            box_sprite->setPosition((((x ) / 8) + (x * m_box_width / 1.0625f) + (m_box_width / 2)) / 6.0f, (22 + ((y + 1) * 40) + (y * m_box_height) + (m_box_height / 2)) / 6.0f);
+            box_sprite->draw();
         }  
     }
 
-    bar_box_sprite->Draw();
+    bar_box_sprite->draw();
 }

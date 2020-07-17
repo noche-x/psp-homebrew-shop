@@ -21,7 +21,8 @@
             "defines": [
                 "_DEBUG",
                 "UNICODE",
-                "_UNICODE"
+                "_UNICODE",
+                "INTERNAL_DEV"
             ],
             "intelliSenseMode": "gcc-x86",
             "compilerPath": "C:/pspsdk/bin/psp-gcc",

@@ -13,20 +13,14 @@
 #include <Utilities/Logger.h>
 #include <Utilities/Input.h>
 #include <Utilities/JSON.h>
-#include <Graphics/RendererCore.h>
-#include <Graphics/UI/UIText.h>
-#include <Graphics/UI/UIButton.h>
-#include <Graphics/Dialogs.h>
+#include <GFX/RenderCore.h>
+#include <GFX/UI/TextRenderer.h>
+#include <Platform/PSP/Dialogs.h>
 #include <Network/NetworkDriver.h>
 
 #include "global_variables.h"
 #include "app_logic.h"
 #include "definitions.h"
-
-PSP_MODULE_INFO("PSP-Homebrew-Shop", 0, 0, 1);
-PSP_MAIN_THREAD_ATTR(THREAD_ATTR_VFPU | THREAD_ATTR_USER);
-PSP_HEAP_SIZE_KB(-1024);
-
 using namespace Stardust;
 
 int main()
@@ -36,13 +30,15 @@ int main()
 
     // NOTE: add trace logs to stardust
     Utilities::detail::core_Logger->currentLevel = Utilities::LoggerLevel::LOGGER_LEVEL_TRACE;
-
+    
+    g::dark_bar = GFX::g_TextureManager->loadTex("assets/images/dark_bar.png", GFX_FILTER_LINEAR, GFX_FILTER_LINEAR, false);
+    g::bar = GFX::g_TextureManager->loadTex("assets/images/bar.png", GFX_FILTER_LINEAR, GFX_FILTER_LINEAR, false);
 #ifndef SKIP_NET_INIT
     if (!Network::g_NetworkDriver.Init())
     {
         Utilities::app_Logger->log("[!] network init failed. could be that the network is down or user canceled.");
-        Graphics::ShowMessageError("Failed to initalize the network driver.", 0x80020001);
-        Graphics::ShowMessage("Failed to initalize the network driver.");
+        Platform::PSP::ShowMessageError("Failed to initalize the network driver.", 0x80020001);
+        Platform::PSP::ShowMessage("Failed to initalize the network driver.");
         
         Platform::exitPlatform();
     }
@@ -52,33 +48,36 @@ int main()
     g::network_init = false;
     Utilities::app_Logger->log("skipping network init...");
 #endif
-
     app_logic *g_logic = new app_logic();
     g_logic->init();
 
-    Graphics::g_RenderCore.Set2DMode();
-    Graphics::g_RenderCore.SetClearColor(30, 30, 30, 255);
+    GFX::g_RenderCore->setClearColor(30.0f/255.0f, 30.0f/255.0f, 30.0f/255.0f, 1.0f);
 
 #ifdef INTERNAL_DEV
     const char* dev_ver = "DEV VERSION";
-    Graphics::UI::UIText* dev_version_text = new Graphics::UI::UIText({480 - (int)(intraFontMeasureText(Graphics::UI::g_DefaultFont, dev_ver) * 0.7f), 267}, dev_ver);
-    dev_version_text->setOptions({0.7f, 0xFFFFFFFF, INTRAFONT_ALIGN_LEFT});
+    
+    g::font_renderer = new GFX::UI::TextRenderer();
+    g::font_renderer->init("./assets/font.pgf");
 #endif
 
     while (g_logic->is_running())
     {
-        Graphics::g_RenderCore.BeginCommands();
-        Graphics::g_RenderCore.Clear();
+        GFX::g_RenderCore->beginFrame();
+        GFX::g_RenderCore->clear();
 
         g_logic->run();
 
 #ifdef INTERNAL_DEV
-        dev_version_text->draw();
+        g::font_renderer->setStyle({255, 255, 255, 255, 0.7f, INTRAFONT_ALIGN_RIGHT, INTRAFONT_ALIGN_RIGHT, 0, false});
+        g::font_renderer->draw(dev_ver, {480, 265});
 #endif
 
         Platform::platformUpdate();
-        Graphics::g_RenderCore.EndCommands();
+        Utilities::app_Logger->flushLog();
+        Utilities::detail::core_Logger->flushLog();
+        GFX::g_RenderCore->endFrame();
     }
+
 
     Platform::exitPlatform();
 

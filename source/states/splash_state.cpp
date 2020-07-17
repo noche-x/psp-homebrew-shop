@@ -13,14 +13,17 @@ double easeInOutExpo(double t)
     }
 }
 
+unsigned int app_logo, logo_tex;
 void splash_state::init()
 {
     m_should_change = false;
+    logo_tex = Stardust::GFX::g_TextureManager->loadTex("./assets/images/stardust_logo.png", GFX_FILTER_NEAREST, GFX_FILTER_NEAREST, false);
+    app_logo = Stardust::GFX::g_TextureManager->loadTex("./assets/images/app_logo.png", GFX_FILTER_NEAREST, GFX_FILTER_NEAREST, false);
 
-    stardust_logo_sprite = new Stardust::Graphics::Render2D::Sprite(Stardust::Graphics::TextureUtil::LoadTex("./assets/images/stardust_logo.png"));
-    app_logo_sprite = new Stardust::Graphics::Render2D::Sprite(Stardust::Graphics::TextureUtil::LoadTex("./assets/images/app_logo.png"));
-    stardust_logo_sprite->SetPosition(240, 136);
-    app_logo_sprite->SetPosition(240, 136);
+    stardust_logo_sprite = new Stardust::GFX::Render2D::Sprite(logo_tex);
+    app_logo_sprite = new Stardust::GFX::Render2D::Sprite(app_logo);
+    stardust_logo_sprite->setPosition(240, 136);
+    app_logo_sprite->setPosition(240, 136);
 
     m_animation_timer = new Stardust::Utilities::Timer();
     m_animation_timer->reset();
@@ -28,6 +31,8 @@ void splash_state::init()
 
 void splash_state::destroy()
 {
+    Stardust::GFX::g_TextureManager->deleteTex(logo_tex);
+    Stardust::GFX::g_TextureManager->deleteTex(app_logo);
     delete stardust_logo_sprite;
     delete app_logo_sprite;
     delete m_animation_timer;
@@ -54,9 +59,9 @@ void splash_state::draw()
         
     if (m_animation_timer->elapsed() > 0.f && m_animation_timer->elapsed() < 3.f)
     {
-        alpha = easeInOutExpo(m_animation_timer->elapsed() / 3) * 255;
-        stardust_logo_sprite->Alpha(alpha);
-        stardust_logo_sprite->Draw();
+        alpha = easeInOutExpo(m_animation_timer->elapsed() / 3);
+        stardust_logo_sprite->setColor(1.0f, 1.0f, 1.0f, alpha);
+        stardust_logo_sprite->draw();
     }
 
     if (m_animation_timer->elapsed() > 3.f && m_animation_timer->elapsed() < 4.f)
@@ -66,13 +71,13 @@ void splash_state::draw()
 
     if (m_animation_timer->elapsed() > 4.f && m_animation_timer->elapsed() < 6.1f)
     {
-        alpha = easeInOutExpo((m_animation_timer->elapsed() - 4.1f) / 3) * 255;
-        app_logo_sprite->Alpha(alpha);
-        app_logo_sprite->Draw();
+        alpha = easeInOutExpo((m_animation_timer->elapsed() - 4.1f) / 3);
+        app_logo_sprite->setColor(1.0f, 1.0f, 1.0f, alpha);
+        app_logo_sprite->draw();
     }
     if (m_animation_timer->elapsed() > 6.1f) {
-        alpha = 255.f;
-        app_logo_sprite->Alpha(alpha);
-        app_logo_sprite->Draw();
+        alpha = 1.f;
+        app_logo_sprite->setColor(1.0f, 1.0f, 1.0f, alpha);
+        app_logo_sprite->draw();
     }
 }

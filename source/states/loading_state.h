@@ -1,9 +1,8 @@
 #pragma once
 
 #include "../state.h"
-#include <Graphics/2D/SpriteBase.h>
+#include <GFX/2D/Sprite.h>
 #include <Utilities/Timer.h>
-#include <Graphics/UI/MarqueeText.h>
 
 class loading_state : public state {
 public:
@@ -20,8 +19,6 @@ private:
 	int m_bar_scale;
 
 	Stardust::Utilities::Timer* m_animation_timer;
-	Stardust::Graphics::UI::UIText* loading_what_text;
-	Stardust::Graphics::UI::UIText* input_text;
-	Stardust::Graphics::Render2D::Sprite* bar_sprite;
-	Stardust::Graphics::Render2D::Sprite* dark_bar_sprite;
+	Stardust::GFX::Render2D::Sprite* bar_sprite;
+	Stardust::GFX::Render2D::Sprite* dark_bar_sprite;
 };
