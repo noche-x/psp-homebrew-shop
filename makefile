@@ -3,11 +3,11 @@ OBJS = 	source/main.o \
  		source/state_manager.o \
  		source/app_logic.o \
  		source/global_variables.o \
- 		source/states/loading_state.o \
  		source/states/splash_state.o \
  		source/states/shop_state.o \
+ 		source/states/loading_state.o \
 
-INCDIR = $(PSPPATH)/include lib/Stardust-Engine/include lib/Stardust-Engine/libs/include
+INCDIR = $(PSPPATH)/include lib/Stardust-Engine/Deps/include lib/Stardust-Engine/Core/include lib/Stardust-Engine/Utilities/include lib/Stardust-Engine/Platform/include
 
 CFLAGS = -O3 -G0 -mpreferred-stack-boundary=4 -ffast-math -fno-rtti -fno-exceptions -DCURRENT_PLATFORM=PLATFORM_PSP -DSKIP_NET_INIT -DSKIP_SPLASH
 CXXFLAGS =

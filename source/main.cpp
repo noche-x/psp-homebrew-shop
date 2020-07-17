@@ -13,10 +13,9 @@
 #include <Utilities/Logger.h>
 #include <Utilities/Input.h>
 #include <Utilities/JSON.h>
-#include <Graphics/RendererCore.h>
-#include <Graphics/UI/UIText.h>
-#include <Graphics/UI/UIButton.h>
-#include <Graphics/Dialogs.h>
+#include <GFX/RenderCore.h>
+#include <GFX/UI/TextRenderer.h>
+#include <Platform/PSP/Dialogs.h>
 #include <Network/NetworkDriver.h>
 
 #include "global_variables.h"
@@ -41,8 +40,8 @@ int main()
     if (!Network::g_NetworkDriver.Init())
     {
         Utilities::app_Logger->log("[!] network init failed. could be that the network is down or user canceled.");
-        Graphics::ShowMessageError("Failed to initalize the network driver.", 0x80020001);
-        Graphics::ShowMessage("Failed to initalize the network driver.");
+        Platform::PSP::ShowMessageError("Failed to initalize the network driver.", 0x80020001);
+        Platform::PSP::ShowMessage("Failed to initalize the network driver.");
         
         Platform::exitPlatform();
     }
@@ -56,29 +55,30 @@ int main()
     app_logic *g_logic = new app_logic();
     g_logic->init();
 
-    Graphics::g_RenderCore.Set2DMode();
-    Graphics::g_RenderCore.SetClearColor(30, 30, 30, 255);
+    GFX::g_RenderCore->setClearColor(30.0f/255.0f, 30.0f/255.0f, 30.0f/255.0f, 1.0f);
 
 #ifdef INTERNAL_DEV
     const char* dev_ver = "DEV VERSION";
-    Graphics::UI::UIText* dev_version_text = new Graphics::UI::UIText({480 - (int)(intraFontMeasureText(Graphics::UI::g_DefaultFont, dev_ver) * 0.7f), 267}, dev_ver);
-    dev_version_text->setOptions({0.7f, 0xFFFFFFFF, INTRAFONT_ALIGN_LEFT});
+    
+    g::font_renderer = new GFX::UI::TextRenderer();
 #endif
 
     while (g_logic->is_running())
     {
-        Graphics::g_RenderCore.BeginCommands();
-        Graphics::g_RenderCore.Clear();
+        GFX::g_RenderCore->beginFrame();
+        GFX::g_RenderCore->clear();
 
         g_logic->run();
 
 #ifdef INTERNAL_DEV
-        dev_version_text->draw();
+        g::font_renderer->setStyle({255, 255, 255, 255, 0.7f, -1, INTRAFONT_ALIGN_RIGHT, 0, false});
+        g::font_renderer->draw(dev_ver, {480, 262});
 #endif
 
         Platform::platformUpdate();
-        Graphics::g_RenderCore.EndCommands();
+        GFX::g_RenderCore->endFrame();
     }
+
 
     Platform::exitPlatform();
 

@@ -3,7 +3,6 @@
 #include "../definitions.h"
 #include <Utilities/Logger.h>
 #include <Network/NetworkDriver.h>
-#include <Graphics/Dialogs.h>
 #include <Network/NetworkDriver.h>
 #include <Core/Core.h>
 #include <pspaudio.h>
@@ -18,16 +17,16 @@ void loading_state::init()
     m_loading_text_alpha = 255;
     m_bar_scale = 1.5f;
     
-    input_text = new Stardust::Graphics::UI::UIText({240, 106}, "loading");
-    loading_what_text = new Stardust::Graphics::UI::UIText({240, 180}, "network");
+    input_text = new Stardust::GFX::UI::UIText({240, 106}, "loading");
+    loading_what_text = new Stardust::GFX::UI::UIText({240, 180}, "network");
 
     loading_what_text->setOptions({0.5f, 0xFFFFFFFF, INTRAFONT_ALIGN_CENTER});
 
     // NOTE: if it can't find the png files check where its loading from,
     //      example: (for me atleast ) on windows usbhostfs_pc doesn't change dirs
     //      so i have to start it from the dir i want it to be at. 
-    bar_sprite = new Stardust::Graphics::Render2D::Sprite(Stardust::Graphics::TextureUtil::LoadPng("assets/images/bar.png"));
-    dark_bar_sprite = new Stardust::Graphics::Render2D::Sprite(Stardust::Graphics::TextureUtil::LoadPng("assets/images/dark_bar.png"));
+    bar_sprite = new Stardust::GFX::Render2D::Sprite(Stardust::GFX::TextureUtil::LoadPng("assets/images/bar.png"));
+    dark_bar_sprite = new Stardust::GFX::Render2D::Sprite(Stardust::GFX::TextureUtil::LoadPng("assets/images/dark_bar.png"));
 
     bar_sprite->SetPosition(240, 136);
     dark_bar_sprite->SetPosition(240, 136);

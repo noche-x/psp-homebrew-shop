@@ -3,7 +3,7 @@
 #include "../definitions.h"
 #include <Utilities/Logger.h>
 #include <Network/NetworkDriver.h>
-#include <Graphics/Dialogs.h>
+#include <GFX/Dialogs.h>
 #include <Network/NetworkDriver.h>
 #include <Core/Core.h>
 #include <Utilities/Input.h>
@@ -23,15 +23,15 @@ void shop_state::init()
 
     names_vector.clear();
 
-    box_sprite = new Graphics::Render2D::Sprite(Graphics::TextureUtil::LoadPng("assets/images/dark_bar.png"));
+    box_sprite = new GFX::Render2D::Sprite(GFX::TextureUtil::LoadPng("assets/images/dark_bar.png"));
     box_sprite->RGB(170, 170, 170);
     box_sprite->Scale(m_box_width / 10, m_box_height / 10);
     
-    bar_box_sprite = new Graphics::Render2D::Sprite(Graphics::TextureUtil::LoadPng("assets/images/bar.png"));
+    bar_box_sprite = new GFX::Render2D::Sprite(GFX::TextureUtil::LoadPng("assets/images/bar.png"));
     bar_box_sprite->Scale(100, 2);
     bar_box_sprite->SetPosition((5 * box_sprite->scaleX) / 2, ( 5 * box_sprite->scaleY) / 4);
 
-    app_name_text = new Stardust::Graphics::UI::UIText({240, 106}, "loading");
+    app_name_text = new Stardust::GFX::UI::UIText({240, 106}, "loading");
 }
 
 void shop_state::destroy()

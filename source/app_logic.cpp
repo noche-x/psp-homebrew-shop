@@ -1,5 +1,6 @@
 #include "app_logic.h"
 #include <Utilities/Logger.h>
+#include <GFX/RenderCore.h>
 
 void app_logic::init() {
     m_state_manager = new state_manager();
@@ -19,11 +20,11 @@ void app_logic::run() {
 
     if (m_state_manager->current_state() == m_splash_state && m_state_manager->should_change()) {
         m_state_manager->change_state(m_loading_state);
-        Stardust::Graphics::g_RenderCore.SetClearColor(40, 40, 40, 255);
+        Stardust::GFX::g_RenderCore->setClearColor(40.0f / 255.0f, 40.0f / 255.0f, 40.0f / 255.0f, 1.0f);
     }
     else if (m_state_manager->current_state() == m_loading_state && m_state_manager->should_change()) {
         m_state_manager->change_state(m_shop_state);
-        Stardust::Graphics::g_RenderCore.SetClearColor(50, 50, 50, 255);
+        Stardust::GFX::g_RenderCore->setClearColor(50.0f / 255.0f, 50.0f / 255.0f, 50.0f / 255.0f, 1.0f);
     }
     
     m_state_manager->update();
