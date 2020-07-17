@@ -73,6 +73,8 @@ int main()
 #endif
 
         Platform::platformUpdate();
+        Utilities::app_Logger->flushLog();
+        Utilities::detail::core_Logger->flushLog();
         GFX::g_RenderCore->endFrame();
     }
 
