@@ -11,9 +11,13 @@
 
 using namespace Stardust;
 
+float x_a, y_a;
 void shop_state::init()
 {
     m_should_change = false;
+
+    x_a = 6.9f;
+    y_a = 4.2f;
 
     m_box_width = 110;
     m_box_height = 67;
@@ -21,13 +25,13 @@ void shop_state::init()
     m_selection_index = 0;
 
     names_vector.clear();
+    
+    box_sprite = new GFX::Render2D::Sprite(g::textures::dark_bar);
+    bar_box_sprite = new GFX::Render2D::Sprite(g::textures::bar);
 
-    
-    
-    box_sprite = new GFX::Render2D::Sprite(g::dark_bar);
     box_sprite->setColor(170.0f / 255.0f, 170.0f / 255.0f, 170.0f / 255.0f, 1.0f);
     box_sprite->setScale((float)m_box_width / 16.0f, (float)m_box_height / 16.0f);
-    bar_box_sprite = new GFX::Render2D::Sprite(g::bar);
+    
     bar_box_sprite->setScale(100, 2);
     //bar_box_sprite->setPosition((5 * 100) / 2, (5 * 2) / 4);
 }
@@ -40,7 +44,12 @@ void shop_state::update()
 {
     //battery_text->setContent(scePow);   
 
-    //if (Utilities::KeyPressed(PSP_CTRL_CROSS));
+    if (Utilities::KeyPressed(PSP_CTRL_CROSS)) {
+        x_a += 0.1f;
+    }
+    if (Utilities::KeyPressed(PSP_CTRL_CIRCLE)) {
+        y_a += 0.1f;
+    }
     
     static bool once = true; 
     if (once) {
@@ -64,11 +73,23 @@ bool shop_state::should_change()
 
 void shop_state::draw()
 {
-    for (int y = 0; y < 3; y++) 
+    for (int y = 0; y < 4; y++) 
     {
         for (int x = 0; x < 4; x++)
         {   
-            box_sprite->setPosition((((x ) / 8) + (x * m_box_width / 1.0625f) + (m_box_width / 2)) / 6.0f, (22 + ((y + 1) * 40) + (y * m_box_height) + (m_box_height / 2)) / 6.0f);
+            float x_padding = (x + 1) * 8.5f;
+            float x_box_width_pos = x * m_box_width;
+            float x_center_to_left_align = m_box_width / 2;
+            
+            float y_padding = (y + 1) * 6.5f;
+            float y_box_width_pos = y * m_box_height;
+            float y_center_to_left_align = m_box_height / 2;
+
+            //                                V                       vvvvvvvvv                       vvvvvv                   vv                                             vvvvvvv
+            box_sprite->setPosition((((x + 1) / 8) + (x * m_box_width / 1.0625f) + (m_box_width / 2)) / 6.0f, (22 + ((y + 1) * 40) + (y * m_box_height) + (m_box_height / 2)) / 6.0f);
+            box_sprite->setPosition((x_box_width_pos + x_center_to_left_align + x_padding) / x_a, 5 + ((y_box_width_pos + y_center_to_left_align + y_padding) / y_a));
+            
+            //box_sprite->setPosition((x_padding / 16 + x_box_width_pos + x_center_to_left_align) / 6.0f, (22 + y_padding / 20 + y_box_width_pos + y_center_to_left_align) / 6.0f);
             box_sprite->draw();
         }  
     }

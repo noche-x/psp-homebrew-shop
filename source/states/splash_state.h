@@ -15,6 +15,9 @@ private:
     bool m_should_change;
 
 	Stardust::Utilities::Timer* m_animation_timer;
+	
+	unsigned int app_logo_tex, stardust_logo_tex;
+
 	Stardust::GFX::Render2D::Sprite* stardust_logo_sprite;
 	Stardust::GFX::Render2D::Sprite* app_logo_sprite;
 };

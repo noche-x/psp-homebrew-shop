@@ -21,6 +21,7 @@
 #include "global_variables.h"
 #include "app_logic.h"
 #include "definitions.h"
+
 using namespace Stardust;
 
 int main()
@@ -31,8 +32,9 @@ int main()
     // NOTE: add trace logs to stardust
     Utilities::detail::core_Logger->currentLevel = Utilities::LoggerLevel::LOGGER_LEVEL_TRACE;
     
-    g::dark_bar = GFX::g_TextureManager->loadTex("assets/images/dark_bar.png", GFX_FILTER_LINEAR, GFX_FILTER_LINEAR, false);
-    g::bar = GFX::g_TextureManager->loadTex("assets/images/bar.png", GFX_FILTER_LINEAR, GFX_FILTER_LINEAR, false);
+    g::textures::dark_bar = GFX::g_TextureManager->loadTex("assets/images/dark_bar.png", GFX_FILTER_LINEAR, GFX_FILTER_LINEAR, false);
+    g::textures::bar = GFX::g_TextureManager->loadTex("assets/images/bar.png", GFX_FILTER_LINEAR, GFX_FILTER_LINEAR, false);
+
 #ifndef SKIP_NET_INIT
     if (!Network::g_NetworkDriver.Init())
     {
@@ -42,23 +44,21 @@ int main()
         
         Platform::exitPlatform();
     }
-    
+
     Utilities::app_Logger->log("network init done.");
 #else
     g::network_init = false;
     Utilities::app_Logger->log("skipping network init...");
 #endif
+
     app_logic *g_logic = new app_logic();
     g_logic->init();
 
     GFX::g_RenderCore->setClearColor(30.0f/255.0f, 30.0f/255.0f, 30.0f/255.0f, 1.0f);
-
-#ifdef INTERNAL_DEV
-    const char* dev_ver = "DEV VERSION";
     
     g::font_renderer = new GFX::UI::TextRenderer();
     g::font_renderer->init("./assets/font.pgf");
-#endif
+    g::font_renderer->setStyle({255, 255, 255, 255, 1.f, INTRAFONT_ALIGN_CENTER, INTRAFONT_ALIGN_CENTER, 0, true});
 
     while (g_logic->is_running())
     {
@@ -69,15 +69,20 @@ int main()
 
 #ifdef INTERNAL_DEV
         g::font_renderer->setStyle({255, 255, 255, 255, 0.7f, INTRAFONT_ALIGN_RIGHT, INTRAFONT_ALIGN_RIGHT, 0, false});
-        g::font_renderer->draw(dev_ver, {480, 265});
+        g::font_renderer->draw("DEV VERSION", {480, 265});
+        g::font_renderer->setStyle({255, 255, 255, 255, 1.f, INTRAFONT_ALIGN_CENTER, INTRAFONT_ALIGN_CENTER, 0, true});
 #endif
 
         Platform::platformUpdate();
+
         Utilities::app_Logger->flushLog();
         Utilities::detail::core_Logger->flushLog();
+        
         GFX::g_RenderCore->endFrame();
     }
 
+    Utilities::app_Logger->flushLog();
+    Utilities::detail::core_Logger->flushLog();
 
     Platform::exitPlatform();
 

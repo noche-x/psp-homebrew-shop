@@ -25,8 +25,8 @@ void loading_state::init()
     // NOTE: if it can't find the png files check where its loading from,
     //      example: (for me atleast ) on windows usbhostfs_pc doesn't change dirs
     //      so i have to start it from the dir i want it to be at. 
-    bar_sprite = new Stardust::GFX::Render2D::Sprite(g::bar);
-    dark_bar_sprite = new Stardust::GFX::Render2D::Sprite(g::dark_bar);
+    bar_sprite = new Stardust::GFX::Render2D::Sprite(g::textures::bar);
+    dark_bar_sprite = new Stardust::GFX::Render2D::Sprite(g::textures::dark_bar);
 
     bar_sprite->setPosition(240, 136);
     dark_bar_sprite->setPosition(240, 136);
@@ -138,8 +138,9 @@ void loading_state::draw()
     if (m_should_change)
         return;
 
-    g::font_renderer->setStyle({255, 255, 255, m_loading_text_alpha, 1.f, -1, INTRAFONT_ALIGN_CENTER, 0.0f, false});
-    g::font_renderer->draw("Loading", {240, 106});
+    g::font_renderer->setStyle({255, 255, 255, m_loading_text_alpha, 1.f, -1, INTRAFONT_ALIGN_CENTER, 0.0f, true});
+    g::font_renderer->draw("loading", {240, 106});
+    g::font_renderer->setStyle({255, 255, 255, 255, 0.5f, -1, INTRAFONT_ALIGN_CENTER, 0.0f, true});
     g::font_renderer->draw(what, {240, 180});
     
     dark_bar_sprite->draw();

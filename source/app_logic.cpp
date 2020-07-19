@@ -8,6 +8,7 @@ void app_logic::init() {
     m_splash_state = new splash_state();
     m_loading_state = new loading_state();
     m_shop_state = new shop_state();
+
 #ifndef SKIP_SPLASH
     m_state_manager->change_state(m_splash_state);
 #else
@@ -17,7 +18,6 @@ void app_logic::init() {
 };
 
 void app_logic::run() {
-
     if (m_state_manager->current_state() == m_splash_state && m_state_manager->should_change()) {
         m_state_manager->change_state(m_loading_state);
         Stardust::GFX::g_RenderCore->setClearColor(40.0f / 255.0f, 40.0f / 255.0f, 40.0f / 255.0f, 1.0f);
