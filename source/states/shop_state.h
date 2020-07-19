@@ -15,8 +15,10 @@ public:
 	bool should_change();
 private:
     bool m_should_change;
+
 	int m_box_width;
 	int m_box_height;
+	
 	int m_selection_index;
 
 	GFX::Render2D::Sprite* box_sprite;

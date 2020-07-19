@@ -8,6 +8,7 @@
 #include <Utilities/Input.h>
 #include <pspaudio.h>
 #include <psppower.h>
+#include <cmath>
 
 using namespace Stardust;
 
@@ -18,7 +19,7 @@ void shop_state::init()
 
     x_a = 6.9f;
     y_a = 4.2f;
-
+    
     m_box_width = 110;
     m_box_height = 67;
 
@@ -44,13 +45,27 @@ void shop_state::update()
 {
     //battery_text->setContent(scePow);   
 
-    if (Utilities::KeyPressed(PSP_CTRL_CROSS)) {
-        x_a += 0.1f;
-    }
-    if (Utilities::KeyPressed(PSP_CTRL_CIRCLE)) {
-        y_a += 0.1f;
-    }
-    
+    if (Utilities::KeyPressed(PSP_CTRL_UP)) {
+        m_selection_index -= 4;
+        if (m_selection_index < 0)
+            m_selection_index = 0;
+    } 
+    else if (Utilities::KeyPressed(PSP_CTRL_DOWN)) {
+        m_selection_index += 4;
+        if (m_selection_index > 15)
+            m_selection_index = 15;
+    } 
+    else if (Utilities::KeyPressed(PSP_CTRL_RIGHT)) {
+        m_selection_index += 1;
+        if (m_selection_index > 15)
+            m_selection_index = 15;
+    } 
+    else if (Utilities::KeyPressed(PSP_CTRL_LEFT)) {
+        m_selection_index -= 1;
+        if (m_selection_index < 0)
+            m_selection_index = 0;
+    } 
+
     static bool once = true; 
     if (once) {
         once = false;
@@ -73,6 +88,27 @@ bool shop_state::should_change()
 
 void shop_state::draw()
 {
+    box_sprite->setColor(140.0f / 255.0f, 140.0f / 255.0f, 140.0f / 255.0f, 1.0f);
+    box_sprite->setScale((float)(m_box_width + 2) / 16.0f, (float)(m_box_height + 2) / 16.0f);
+
+    int y = std::floor(m_selection_index / 4);
+    int x = m_selection_index - y * 4;
+    
+    float x_padding = (x + 1) * 8.5f;
+    float x_box_width_pos = x * m_box_width;
+    float x_center_to_left_align = m_box_width / 2;
+            
+    float y_padding = (y + 1) * 6.5f;
+    float y_box_width_pos = y * m_box_height;
+    float y_center_to_left_align = m_box_height / 2;
+    
+    box_sprite->setPosition((x_box_width_pos + x_center_to_left_align + x_padding) / x_a, 5 + ((y_box_width_pos + y_center_to_left_align + y_padding) / y_a));
+
+    box_sprite->draw();
+
+    box_sprite->setScale((float)m_box_width / 16.0f, (float)m_box_height / 16.0f);
+    box_sprite->setColor(170.0f / 255.0f, 170.0f / 255.0f, 170.0f / 255.0f, 1.0f);
+
     for (int y = 0; y < 4; y++) 
     {
         for (int x = 0; x < 4; x++)
@@ -85,14 +121,12 @@ void shop_state::draw()
             float y_box_width_pos = y * m_box_height;
             float y_center_to_left_align = m_box_height / 2;
 
-            //                                V                       vvvvvvvvv                       vvvvvv                   vv                                             vvvvvvv
-            box_sprite->setPosition((((x + 1) / 8) + (x * m_box_width / 1.0625f) + (m_box_width / 2)) / 6.0f, (22 + ((y + 1) * 40) + (y * m_box_height) + (m_box_height / 2)) / 6.0f);
             box_sprite->setPosition((x_box_width_pos + x_center_to_left_align + x_padding) / x_a, 5 + ((y_box_width_pos + y_center_to_left_align + y_padding) / y_a));
-            
-            //box_sprite->setPosition((x_padding / 16 + x_box_width_pos + x_center_to_left_align) / 6.0f, (22 + y_padding / 20 + y_box_width_pos + y_center_to_left_align) / 6.0f);
             box_sprite->draw();
         }  
-    }
+    }    
 
     bar_box_sprite->draw();
+    g::font_renderer->draw(std::to_string(x), {20, 20});
+    g::font_renderer->draw(std::to_string(y), {45, 20});
 }
