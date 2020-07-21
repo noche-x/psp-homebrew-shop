@@ -3,6 +3,7 @@
 #include "../state.h"
 #include <GFX/2D/Sprite.h>
 #include <Utilities/Timer.h>
+#include <>
 
 using namespace Stardust;
 
@@ -23,5 +24,5 @@ private:
 
 	GFX::Render2D::Sprite* box_sprite;
 	GFX::Render2D::Sprite* bar_box_sprite;
-	std::vector<const char*> names_vector;
+	std::vector<std::pair<std::string, std::string>> json_vector;
 };

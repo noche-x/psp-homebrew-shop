@@ -25,7 +25,7 @@ void shop_state::init()
 
     m_selection_index = 0;
 
-    names_vector.clear();
+    json_vector.clear();
     
     box_sprite = new GFX::Render2D::Sprite(g::textures::dark_bar);
     bar_box_sprite = new GFX::Render2D::Sprite(g::textures::bar);
@@ -75,7 +75,7 @@ void shop_state::update()
         {
             if (v["apps"][i].isObject())
             {
-                //names_vector.push_back(v["apps"][i]["name"].asString().c_str());
+                json_vector.push_back(std::pair(v["apps"][i]["name"].asString(), v["apps"][i]["large"].asString()));
             }
         } 
     }
@@ -95,12 +95,12 @@ void shop_state::draw()
     int x = m_selection_index - y * 4;
     
     float x_padding = (x + 1) * 8.5f;
-    float x_box_width_pos = x * m_box_width;
-    float x_center_to_left_align = m_box_width / 2;
+    float x_box_width_pos = x * (m_box_width + 2);
+    float x_center_to_left_align = (m_box_width + 2) / 2;
             
     float y_padding = (y + 1) * 6.5f;
-    float y_box_width_pos = y * m_box_height;
-    float y_center_to_left_align = m_box_height / 2;
+    float y_box_width_pos = y * (m_box_height + 2);
+    float y_center_to_left_align = (m_box_height + 2) / 2;
     
     box_sprite->setPosition((x_box_width_pos + x_center_to_left_align + x_padding) / x_a, 5 + ((y_box_width_pos + y_center_to_left_align + y_padding) / y_a));
 
@@ -123,6 +123,8 @@ void shop_state::draw()
 
             box_sprite->setPosition((x_box_width_pos + x_center_to_left_align + x_padding) / x_a, 5 + ((y_box_width_pos + y_center_to_left_align + y_padding) / y_a));
             box_sprite->draw();
+            
+            json_vector.at(x + y).first;
         }  
     }    
 
