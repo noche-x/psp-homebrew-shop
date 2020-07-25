@@ -15,8 +15,8 @@ private:
     bool m_should_change;
     bool m_content_init;
 
-	int m_loading_text_alpha;
-	int m_bar_scale;
+	uint8_t m_loading_text_alpha;
+	uint8_t m_bar_scale;
 
 	Stardust::Utilities::Timer* m_animation_timer;
 	Stardust::GFX::Render2D::Sprite* bar_sprite;

@@ -2,6 +2,32 @@
     "apps": [
       {
         "name": "mcpsp",
+        "large": "cache/mcpsp/icon512.png",
+        "desc": "hello everyone, this is description"
+      },
+      {
+        "name": "second coming",
+        "large": "cache/hbshop/large.png",
+        "desc": "fuck you coooomerrrrrrrrrr"
+      },
+      {
+        "name": "sex tape",
+        "large": "cache/mcpsp/icon512.png",
+        "desc": "hello everyone, this is description"
+      },
+      {
+        "name": "furry porn",
+        "large": "cache/mcpsp/icon512.png",
+        "desc": "hello everyone, this is description"
+      },
+      {
+        "name": "bible",
+        "large": "cache/mcpsp/icon512.png",
+        "desc": "hello everyone, this is description"
+      },
+      {
+        "name": "porn comics",
+        "large": "cache/mcpsp/icon512.png",
         "desc": "hello everyone, this is description"
       }
     ]

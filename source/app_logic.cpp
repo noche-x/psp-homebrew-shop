@@ -18,17 +18,19 @@ void app_logic::init() {
 };
 
 void app_logic::run() {
+    m_state_manager->update();
+    m_state_manager->draw(); 
+
     if (m_state_manager->current_state() == m_splash_state && m_state_manager->should_change()) {
         m_state_manager->change_state(m_loading_state);
+        Utilities::app_Logger->log("loading loading state");
         Stardust::GFX::g_RenderCore->setClearColor(40.0f / 255.0f, 40.0f / 255.0f, 40.0f / 255.0f, 1.0f);
     }
     else if (m_state_manager->current_state() == m_loading_state && m_state_manager->should_change()) {
         m_state_manager->change_state(m_shop_state);
+        Utilities::app_Logger->log("loading shop state");
         Stardust::GFX::g_RenderCore->setClearColor(50.0f / 255.0f, 50.0f / 255.0f, 50.0f / 255.0f, 1.0f);
     }
-    
-    m_state_manager->update();
-    m_state_manager->draw(); 
 };
 
 bool app_logic::is_running() {

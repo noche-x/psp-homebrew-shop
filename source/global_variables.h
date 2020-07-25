@@ -4,6 +4,6 @@ namespace g {
     extern bool network_init;
     extern TextRenderer* font_renderer;
     namespace textures {
-        extern unsigned int bar, dark_bar;
+        extern unsigned int bar;
     }
 }

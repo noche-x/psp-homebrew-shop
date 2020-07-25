@@ -1,5 +1,8 @@
 #include "splash_state.h"
 #include <Utilities/Logger.h>
+#include <Utilities/Input.h>
+
+using namespace Stardust;
 
 double easeInOutExpo(double t)
 {
@@ -23,11 +26,11 @@ void splash_state::init()
     stardust_logo_sprite = new Stardust::GFX::Render2D::Sprite(stardust_logo_tex);
     app_logo_sprite = new Stardust::GFX::Render2D::Sprite(app_logo_tex);
 
-    stardust_logo_sprite->setScale(2.f, 2.f);
-    app_logo_sprite->setScale(2.f, 2.f);
+    stardust_logo_sprite->setScale(1.5f, 1.5f);
+    app_logo_sprite->setScale(1.5f, 1.5f);
 
-    stardust_logo_sprite->setPosition(120, 68);
-    app_logo_sprite->setPosition(120, 68);
+    stardust_logo_sprite->setPosition(240, 136);
+    app_logo_sprite->setPosition(240, 136);
 
     m_animation_timer = new Stardust::Utilities::Timer();
     m_animation_timer->reset();
@@ -46,6 +49,10 @@ void splash_state::destroy()
 void splash_state::update()
 {
     m_animation_timer->deltaTime();
+
+    if (Utilities::KeyPressed(PSP_CTRL_CROSS) || Utilities::KeyPressed(PSP_CTRL_START))
+        m_should_change = true;
+
     if (m_animation_timer->elapsed() > 8.f) {
         m_should_change = true;
     }

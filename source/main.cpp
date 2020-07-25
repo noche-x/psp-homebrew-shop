@@ -5,9 +5,6 @@
 #include <iostream>
 #include <string>
 
-#include <pspsdk.h>
-#include <pspkernel.h>
-
 #include <Platform/Platform.h>
 #include <Utilities/Timer.h>
 #include <Utilities/Logger.h>
@@ -15,7 +12,9 @@
 #include <Utilities/JSON.h>
 #include <GFX/RenderCore.h>
 #include <GFX/UI/TextRenderer.h>
-#include <Platform/PSP/Dialogs.h>
+#ifndef SKIP_NET_INIT
+    #include <Platform/PSP/Dialogs.h>
+#endif
 #include <Network/NetworkDriver.h>
 
 #include "global_variables.h"
@@ -24,6 +23,18 @@
 
 using namespace Stardust;
 
+#if (CURRENT_PLATFORM == PLATFORM_WIN) || (CURRENT_PLATFORM == PLATFORM_NIX)
+namespace std
+{
+    template <typename T>
+    std::string to_string(const T &n) {
+        std::ostringstream stm;
+        stm << n;
+        return stm.str();
+    }
+} // namespace std
+#endif
+
 int main()
 {
     Platform::initPlatform("psp-homebrew-shop");
@@ -31,8 +42,8 @@ int main()
 
     // NOTE: add trace logs to stardust
     Utilities::detail::core_Logger->currentLevel = Utilities::LoggerLevel::LOGGER_LEVEL_TRACE;
+    Utilities::app_Logger->currentLevel = Utilities::LoggerLevel::LOGGER_LEVEL_TRACE;
     
-    g::textures::dark_bar = GFX::g_TextureManager->loadTex("assets/images/dark_bar.png", GFX_FILTER_LINEAR, GFX_FILTER_LINEAR, false);
     g::textures::bar = GFX::g_TextureManager->loadTex("assets/images/bar.png", GFX_FILTER_LINEAR, GFX_FILTER_LINEAR, false);
 
 #ifndef SKIP_NET_INIT
@@ -57,8 +68,8 @@ int main()
     GFX::g_RenderCore->setClearColor(30.0f/255.0f, 30.0f/255.0f, 30.0f/255.0f, 1.0f);
     
     g::font_renderer = new GFX::UI::TextRenderer();
-    g::font_renderer->init("./assets/font.pgf");
-    g::font_renderer->setStyle({255, 255, 255, 255, 1.f, INTRAFONT_ALIGN_CENTER, INTRAFONT_ALIGN_CENTER, 0, true});
+    g::font_renderer->init("flash0:/font/ltn0.pgf");
+    g::font_renderer->setStyle({255, 255, 255, 255, 1.f, TEXT_RENDERER_CENTER, TEXT_RENDERER_CENTER, 0, true});
 
     while (g_logic->is_running())
     {
@@ -68,13 +79,13 @@ int main()
         g_logic->run();
 
 #ifdef INTERNAL_DEV
-        g::font_renderer->setStyle({255, 255, 255, 255, 0.7f, INTRAFONT_ALIGN_RIGHT, INTRAFONT_ALIGN_RIGHT, 0, false});
+        g::font_renderer->setStyle({255, 255, 255, 255, 0.7f, TEXT_RENDERER_RIGHT, TEXT_RENDERER_RIGHT, 0, false});
         g::font_renderer->draw("DEV VERSION", {480, 265});
-        g::font_renderer->setStyle({255, 255, 255, 255, 1.f, INTRAFONT_ALIGN_CENTER, INTRAFONT_ALIGN_CENTER, 0, true});
+        g::font_renderer->setStyle({255, 255, 255, 255, 1.f, TEXT_RENDERER_CENTER, TEXT_RENDERER_CENTER, 0, true});
 #endif
 
         Platform::platformUpdate();
-
+        
         Utilities::app_Logger->flushLog();
         Utilities::detail::core_Logger->flushLog();
         

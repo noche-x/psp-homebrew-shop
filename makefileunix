@@ -1,0 +1,25 @@
+TARGET = psp-homebrew-shop
+TEST_OBJS = source/main.o \
+ 		source/state_manager.o \
+ 		source/app_logic.o \
+ 		source/global_variables.o \
+ 		source/states/splash_state.o \
+ 		source/states/shop_state.o \
+ 		source/states/loading_state.o \
+
+CC = clang
+CXX = clang++
+CFLAGS = -O3 -g -ffast-math -pthread -DCURRENT_PLATFORM=PLATFORM_NIX -DSKIP_NET_INIT -DSKIP_SPLASH -Ilib/Stardust-Engine/Platform/include -Ilib/Stardust-Engine/Core/include -Ilib/Stardust-Engine/Utilities/include -Ilib/Stardust-Engine/Deps/include
+CXXFLAGS = $(CFLAGS) -std=c++17
+LDFLAGS = -Llib/Stardust-Engine/Stardust/lib/nix -L/usr/local/lib -L/usr/local/lib/cmake -L/usr/lib -lstardust-utilities -lglfw -lsfml-audio -lstardust-core -lstardust-platform -lGL -ldl
+
+all: $(TARGET) 
+
+$(TARGET): $(TEST_OBJS)
+	$(CXX) -o $@ $(TEST_OBJS) $(LDFLAGS)
+
+%.o: %.c
+	$(CXX) $(INCDIR) -c -o $@ $< $(CXXFLAGS)
+
+clean:
+	rm -f $(TEST_OBJS) $(TARGET)
