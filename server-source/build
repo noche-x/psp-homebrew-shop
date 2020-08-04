@@ -1,1 +1,0 @@
-g++ -g -O3 -I fmt/include -I fmt/src main.cpp -std=c++17 -lssl -lcrypto -lpthread -lz -ldl -pthread -o server
