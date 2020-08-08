@@ -3,7 +3,6 @@
 #include "../definitions.h"
 #include <Utilities/Logger.h>
 #include <Network/NetworkDriver.h>
-#include <Network/NetworkDriver.h>
 #include <Core/Core.h>
 
 using namespace Stardust;
@@ -48,8 +47,8 @@ std::string what = "";
 void loading_state::update()
 {
     if (m_should_change)
-        return;
-        
+        return;        
+ 
     static bool once = false;
 
     if (m_loading_text_alpha > 0.f)
@@ -61,30 +60,21 @@ void loading_state::update()
         m_loading_text_alpha = 255;
     }
 
-    if (g::network_init || m_content_init)
-    {
-        if (g::network_init)
-            what = "content";
-        if (m_content_init) {
-            what =  "ready";
-            m_should_change = true;
-        }
-
-        m_bar_scale += 2.f;
-        bar_sprite->setScale(m_bar_scale, 1.f);
-
-        g::network_init = false;
-        m_content_init = false;
-    }
-
     if (!m_content_init && !once && g::network_init)
     {
         std::string base_url = "http://psphbshop.s3.eu-central-1.amazonaws.com/";
         std::string req_file = base_url + "cache/apps.json";
 
+        sceIoMkdir("cache", 0777);
+
         Utilities::app_Logger->log(req_file);
-        if (!Network::g_NetworkDriver.GetFileHTTP(req_file.c_str(), "cache/apps.json"))
+        if (!Network::g_NetworkDriver.GetFileHTTP(req_file.c_str(), "cache/apps.json")) {
             Utilities::app_Logger->log("unable to get apps.json (check low level core logs)");
+            what = "unable to get apps.json, probably server maintanance";
+            m_content_init = true;
+            once = true;
+            return;
+        }
         else {
             Utilities::app_Logger->log("recieved cache/apps.json");
 
@@ -94,28 +84,25 @@ void loading_state::update()
             {
                 if (v["apps"][i].isObject())
                 {
-                    std::ifstream f(v["apps"][i].asString() + "/large");
-                    if (!f.good())
-                    {
-                        req_file = base_url + v["apps"][i].asString() + "/large";
-                        Utilities::app_Logger->log(req_file);
+                    req_file = base_url + "cache/" + v["apps"][i]["short"].asString() + "/icon.png";
+                    Utilities::app_Logger->log(req_file);
 
-                        if (Network::g_NetworkDriver.GetFileHTTP(req_file.c_str(), std::string(v["apps"][i].asString() + "/large").c_str()))
-                            Utilities::app_Logger->log("recieved " + v["apps"][i].asString() + "/large");
-                        else
-                            Utilities::app_Logger->log("unable to get " + v["apps"][i].asString() + "/large" + " (check low level core logs)");
-                    }
+                    if (Network::g_NetworkDriver.GetFileHTTP(req_file.c_str(), std::string("cache/" + v["apps"][i]["short"].asString() + "/icon.png").c_str()))
+                        Utilities::app_Logger->log("recieved cache/" + v["apps"][i]["short"].asString() + "/icon.png");
                     else
-                    {
-                        Utilities::app_Logger->log(v["apps"][i].asString() + "/large" + " exists. skiping.");
-                    }
+                        Utilities::app_Logger->log("unable to get cache/" + v["apps"][i]["short"].asString() + "/icon.png" + " (check low level core logs)");
+                }
+                else {
+                    Utilities::app_Logger->log("at index " + std::to_string(i) + " is not a object");
                 }
             }
-            
-            Network::g_NetworkDriver.Cleanup();
         }
 
+        m_bar_scale += 2.f;
+        bar_sprite->setScale(m_bar_scale, 1.f);
+
         m_content_init = true;
+        m_should_change = true;
         once = true;
     }
     else if (!m_content_init && !once && !g::network_init) {

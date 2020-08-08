@@ -1,6 +1,7 @@
 #include "app_logic.h"
 #include <Utilities/Logger.h>
 #include <GFX/RenderCore.h>
+#include <Network/NetworkDriver.h>
 
 void app_logic::init() {
     m_state_manager = new state_manager();

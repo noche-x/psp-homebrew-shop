@@ -12,6 +12,8 @@
 
 using namespace Stardust;
 
+std::vector<std::string> extracted_vector;
+
 void shop_state::init()
 {
     m_should_change = false;
@@ -26,6 +28,7 @@ void shop_state::init()
     m_description = "";
 
     json_vector.clear();
+    extracted_vector.clear();
 
     box_sprite = new GFX::Render2D::Sprite(g::textures::bar);
     bar_box_sprite = new GFX::Render2D::Sprite(g::textures::bar);
@@ -184,7 +187,7 @@ void shop_state::update()
         {
             if (v["apps"][i].isObject())
             {
-                std::string big_thumb = "cache/" + v["apps"][i]["short"].asString() + "icon512.png";
+                std::string big_thumb = "cache/" + v["apps"][i]["short"].asString() + "/icon.png";
                 unsigned int sextillion = GFX::g_TextureManager->loadTex(big_thumb, GFX_FILTER_LINEAR, GFX_FILTER_LINEAR, false);
                 GFX::Render2D::Sprite *temp_sprite = new GFX::Render2D::Sprite(sextillion, {0, 0}, {480, 272});
                 temp_sprite->setScale((float)m_box_width / 480.0f, (float)m_box_height / 272.0f);
@@ -238,7 +241,11 @@ int on_extract_entry(const char *filename, void *arg)
 {
     static int i = 0;
     int n = *(int *)arg;
-    printf("Extracted: %s (%d of %d)\n", filename, ++i, n);
+    
+    std::stringstream stream;
+    stream << "Extracted: " << filename << " (" << ++i << " of " << n << ")";
+
+    extracted_vector.push_back(stream.str());
 
     return 0;
 }
@@ -253,7 +260,7 @@ void shop_state::draw()
     
     static float progress_bar_width = 1.f;
     static int m_loading_text_alpha = 0;
-    static std::string m_what_is_going_on = "";
+    static std::string m_what_is_going_on = "loading";
 
     if (m_page == 0)
     {
@@ -427,6 +434,7 @@ void shop_state::draw()
         // set the color of the box white, change alpha, scale it
         box_sprite->setColor(255.0f / 255.0f, 255.0f / 255.0f, 255.0f / 255.0f, select_box_alpha / 255.f);
         box_sprite->setScale((float)(m_box_width + 6) / 16.0f, (float)(m_box_height + 6) / 16.0f);
+        box_sprite->setColor(200.0f / 255.0f, 200.0f / 255.0f, 200.0f / 255.0f, 1.f);
 
         once_but_again = true;
         m_loading_text_alpha = 255;
@@ -446,36 +454,37 @@ void shop_state::draw()
                 m_loading_text_alpha = 255;
             }
 
-            g::font_renderer->setStyle({255, 255, 255, m_loading_text_alpha, 1.f, -1, TEXT_RENDERER_CENTER, 0.0f, true});
-            if (m_what_is_going_on == "")
-            {
-                g::font_renderer->draw("loading", {240, 106});
+            g::font_renderer->setStyle({ 255, 255, 255, m_loading_text_alpha, 1.f, -1, TEXT_RENDERER_CENTER, 0.0f, true });
+            g::font_renderer->draw(m_what_is_going_on, { 240, 106 });
 
-                box_sprite->setPosition(240, 136);
-                box_sprite->setColor(255.0f / 255.0f, 255.0f / 255.0f, 255.0f / 255.0f, 1.f);
-                box_sprite->setScale(progress_bar_width, 1.f);
-                box_sprite->draw();
-            }
-            else 
+            box_sprite->setPosition(240, 136);
+            box_sprite->setColor(255.0f / 255.0f, 255.0f / 255.0f, 255.0f / 255.0f, 1.f);
+            box_sprite->setScale(progress_bar_width, 1.f);
+            box_sprite->draw();
+
+            g::font_renderer->setStyle({ 255, 255, 255, 255, 0.5f, -1, TEXT_RENDERER_CENTER, 0.0f, true });
+            int line_counter = 0;
+            for (auto &&i : extracted_vector)
             {
-                g::font_renderer->setStyle({255, 255, 255, 255, 0.5f, -1, TEXT_RENDERER_CENTER, 0.0f, true});
-                g::font_renderer->draw(m_what_is_going_on, {240, 136});
+                g::font_renderer->draw(i, { 240, 180 + (line_counter * 10) });
+                line_counter++;
             }
 
             if (once_but_again)
             {
+                m_what_is_going_on = "loading";
                 once_but_again = false;
                 progress_bar_width += 5.f;
+                std::string base_url = "http://psphbshop.s3.eu-central-1.amazonaws.com/";
+                std::string file_to_get_url = base_url + "cache/" + json_vector.at(m_selection_index).short_name + "/app.zip";
                 std::string file_to_get = "cache/" + json_vector.at(m_selection_index).short_name + "/app.zip";
-                std::string where_to_extract = "../" + json_vector.at(m_selection_index).long_name;
 
-                sceIoMkdir(where_to_extract.c_str(), 0777);
-
+                Utilities::app_Logger->log(file_to_get_url);
                 #ifndef SKIP_NET_INIT
-                Network::g_NetworkDriver.GetFileHTTP(file_to_get.c_str(), file_to_get.c_str());
+                Network::g_NetworkDriver.GetFileHTTP(file_to_get_url.c_str(), file_to_get.c_str());
                 #endif
 
-                if (!file_exists(file_to_get)) {
+                if (!file_exists(file_to_get.c_str())) {
                     progress_bar_width = 0;
                     m_what_is_going_on = "file to extract doesn't exists, download error";
                 }
@@ -484,9 +493,10 @@ void shop_state::draw()
                 struct zip_t *zip = zip_open(file_to_get.c_str(), ZIP_DEFAULT_COMPRESSION_LEVEL, 'r');
                 {
                     int arg = 2;
-                    zip_extract(file_to_get.c_str(), where_to_extract.c_str(), on_extract_entry, &arg);
+                    zip_extract(file_to_get.c_str(), "../", on_extract_entry, &arg);
                 }
                 progress_bar_width = 29.f;
+                m_what_is_going_on = "done extracting";
             }
 
             box_sprite->setScale((float)(m_box_width + 6) / 16.0f, (float)(m_box_height + 6) / 16.0f);

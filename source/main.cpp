@@ -56,6 +56,7 @@ int main()
         Platform::exitPlatform();
     }
 
+    g::network_init = true;
     Utilities::app_Logger->log("network init done.");
 #else
     g::network_init = false;

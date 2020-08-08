@@ -9,7 +9,7 @@ OBJS = 	source/main.o \
 
 INCDIR = $(PSPPATH)/include lib/Stardust-Engine/Deps/include lib/Stardust-Engine/Core/include lib/Stardust-Engine/Utilities/include lib/Stardust-Engine/Platform/include lib/zip/src
 
-CFLAGS = -O3 -G0 -mpreferred-stack-boundary=4 -ffast-math -fno-rtti -fno-exceptions -gdwarf-2 -DCURRENT_PLATFORM=PLATFORM_PSP # -DSKIP_NET_INIT  -DSKIP_SPLASH
+CFLAGS = -O3 -G0 -mpreferred-stack-boundary=4 -ffast-math -fno-rtti -fno-exceptions -gdwarf-2 -DCURRENT_PLATFORM=PLATFORM_PSP -DINTERNAL_DEV # -DSKIP_SPLASH # -DSKIP_NET_INIT 
 CXXFLAGS = $(CFLAGS) -std=gnu++17
 ASFLAGS = $(CFLAGS)
 
